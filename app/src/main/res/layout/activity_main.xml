@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+Task 1
+1.1 Create The TwoActivities Project
+Name: TwoActivities
+Template: Empty Activity
+
+1.2 Define the layout for the main activity
+a) Change Constraint to Relative Layout
+b)Delete textView
+c)Add button
+d) Establecer las siguientes propiedades al boton:
+android:id =	"@+id/button_main"
+android:layout_width	= wrap_content
+android:layout_height =	wrap_content
+android:layout_alignParentRight =	"true"
+android:layout_alignParentBottom =	"true"
+android:layout_alignParentEnd =	"true"
+android:text =	"Send"
+android:onClick =	"launchSecondActivity"
+c) Extraer SEND del boton y coloar button_main en resource name.
+
+1.3 Define the button action
+a) Crear metodo onClick = launchSecondActivity
+b) agregar Log.d(LOG_TAG;"button clicked!"
+c) agregar private static final String LOG_TAG = MainActivity.class.getSimpleName();
+d) Run App
+
+Task 2. Create and launch the second activity
+
+2.1 Create the second activity
+File->New->Activity->Empty Activity
+name: activity_second
+2.2 Modify the Android manifest
+
+
+-->
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <Button
+        android:id="@+id/button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:text="Send"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+</android.support.constraint.ConstraintLayout>
