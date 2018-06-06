@@ -22,7 +22,7 @@ c) Extraer SEND del boton y coloar button_main en resource name.
 
 1.3 Define the button action
 a) Crear metodo onClick = launchSecondActivity
-b) agregar Log.d(LOG_TAG;"button clicked!"
+b) agregar Log.d(LOG_TAG,"button clicked!")
 c) agregar private static final String LOG_TAG = MainActivity.class.getSimpleName();
 d) Run App
 
@@ -30,10 +30,169 @@ Task 2. Create and launch the second activity
 
 2.1 Create the second activity
 File->New->Activity->Empty Activity
-name: activity_second
+name: SecondActivity
+layout: activity_second
 2.2 Modify the Android manifest
+a) Open AndroidManifest.xml
+b) Add SecondActivity attributes
+android:label	"Second Activity"
+android:parentActivityName	".MainActivity"
+c) Extract Label activity string
+resource: activity2_name
+d) Add meta element inside activity tag
+android:name	"android.support.PARENT_ACTIVITY"
+android:value	"com.example.android.twoactivities.MainActivity"
+e) Final
+        <activity android:name=".SecondActivitty"
+            android:label="@string/activity2_name"
+            android:parentActivityName=".MainActivity">
+            <meta-data android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.mtw.juancarlos.twoactivitiesapp.MainActivity"
+                />
+        </activity>
+2.3 Define the layout for the second activity
+a) open activity_second.xml and change ConstraintLayout to relative
+b) Add TextView Plain Text with the following properties:
+android:id	"@+id/text_header"
+android:layout_width	wrap_content
+android:layout_height	wrap_content
+android:layout_marginBottom	"@dimen/activity_vertical_margin" -> No existe
+android:text	"Message Received"
+android:textAppearance	"?android:attr/textAppearanceMedium"
+android:textStyle	"bold"
+c) Extract string resource "Message Received"
+resource: text_header
+d) Set constraint top and left and margin 16dp
 
+2.4 Add an intent to the main activity
 
+a) modify launchSencondAcivity method. Create an explicit intent.
+val intent = Intent(this,SecondActivity::class.java)
+b) Run App
+c) Review updown navigation
+Challenge: Modify AndroidManifest.xml and remove android:parentActivityName
+
+Task 3. Send data from the main activity to the second activity
+
+3.1 Add an EditText to the main activity layout
+a) Open activity_main and add EditText view with the following properties:
+android:id	"@+id/editText_main"
+android:layout_width	match_parent
+android:layout_height	wrap_content
+android:layout_toLeftOf	"@+id/button_main"-> No usar
+    android:layout_toStartOf	"@+id/button_main"-> No usar
+    android:layout_alignParentBottom	"true" -> no usar
+    android:hint	"Enter Your Message Here"
+    b) Delete android:text property
+    c) Extract the "Enter Your Message Here" string into a resource named editText_main.
+
+    3.2 Add a string to the main activity's intent extras
+    a) Open MainActivity.kt and add a public constant property
+    companion object {
+    val EXTRA_MESSAGE = "com.mtw.juancarlos.twoactivitiesapp.extra.MESSAGE"
+    }
+    b) Modify launchSecondActivity method and get text message from editTExt_main
+    val message = editText_main.text.toString()
+    c) pass string value to intent
+    intent.putExtra(EXTRA_MESSAGE, message)
+
+    3.3 Add a TextView to the second activity for the message
+    a) Open activity_second.xml and add a second textview with this properties:
+    android:id	"@+id/text_message"
+    android:layout_width	wrap_content
+    android:layout_height	wrap_content
+    android:layout_below	"@+id/text_header"-> No se usa
+    android:layout_marginLeft	"@dimen/activity_horizontal_margin"-> no se usa
+    android:layout_marginStart	"@dimen/activity_horizontal_margin"-> no se usa
+    android:textAppearance	"?android:attr/textAppearanceMedium"
+    b) constraint below text_header and left to the parent
+    c) Delete the android:text attribute (if it exists).
+
+    3.4 Modify the second activity to get the extras and display the message
+    a) Open SecondActivity.kt and getStringExtra from de intent object
+    b) set string to text_message view
+    text_message.text = intent.getStringExtra(MainActivity.EXTRA_MESSAGE)
+    c) Run App
+
+    Task 4. Return data back to the main activity
+
+    4.1 Add an EditText and a Button to the second activity layout
+    a) Copy EditTExt and button from MainActivity to SecondActivity
+    b) Modify properties:
+    ->Old attribute (Button)	      New attribute (Button)
+    android:id="@+id/button_main"	                android:id="@+id/button_second"
+    android:onClick= "launchSecondActivity"	      android:onClick="returnReply"
+    android:text= "@string/button_main"	          android:text= "@string/button_second"
+
+    ->Old attribute (EditText)	    New attribute (EditText)
+    android:id="@+id/editText_main"	              android:id="@+id/editText_second"
+    android:layout_toLeftOf= "@+id/button_main"	  android:layout_toLeftOf= "@+id/button_second" -> no usar
+    android:layout_toStartOf= "@+id/button_main"	android:layout_toStartOf= "@+id/button_second"-> no usar
+    Usar:
+    app:layout_constraintBaseline_toBaselineOf="@+id/button_second"
+    app:layout_constraintEnd_toStartOf="@+id/button_second"
+    android:hint= "@string/editText_main"	        android:hint= "@string/editText_second"
+    c) Extraer los textos. Agregar
+<string name="button_second">Reply</string>
+<string name="editText_second">Enter Your Reply Here</string>
+    d) Create returnReply method in SecondActivity.kt
+
+    4.2 Create a response intent in the second activity
+    a) Open SecondActivity.kt and add a public constant property
+    companion object {
+    val EXTRA_REPLY = "com.mtw.juancarlos.twoactivitiesapp.extra.REPLY"
+    }
+    b) Create a new intent for reply in returnReply method
+    val replyIntent = Intent()
+    c) Get text from edit text second
+    val replyString = editText_second.text
+    d) set text into the reply intent
+    replyIntent.putExtra(EXTRA_REPLY,replyString)
+    e) Return response OK
+    setResult(Activity.RESULT_OK,replyIntent)
+    f) Close Activity
+    finish()
+    METODO COMPLETO:
+    val replyString = editText_second.text.toString()
+    val replyIntent = Intent()
+    replyIntent.putExtra(EXTRA_REPLY,replyString)
+    setResult(Activity.RESULT_OK,replyIntent)
+    finish()
+
+    4.3 Add TextViews to the main activity layout to display the reply
+    a) Copy two textview from SecondActivity to MainActivity
+    b) Change properties:
+    Old attribute (header TextView)	  New attribute (header TextView)
+    android:id="@+id/text_header"	            android:id="@+id/text_header_reply"
+    android:text="@string/text_header"	      android:text= "@string/text_header_reply"
+
+    Old attribute (message TextView)	New attribute (message TextView)
+    android:id="@+id/text_message"	          android:id="@+id/text_message_reply"
+    android:layout_below= "@+id/text_header"	android:layout_below= "@+id/text_header_reply"
+    c) Extract string text_header_reply
+    d) Add visibility = invisible to the both text views
+    android:visibility="invisible"
+
+    4.4 Get the reply from the intent extra and display it
+    a) Open MainActivity and add public constant int TEXT as companion object
+    val TEXT_REQUEST = 1
+    b) Modify launchSecondActivity comment startActivity() and add startActivityForResult()
+    startActivityForResult(intent, TEXT_REQUEST)
+
+    c) Create onActivityResult() callback alt+ins override method
+    d) Get Activity Response
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+    super.onActivityResult(requestCode, resultCode, data)
+
+    if (requestCode == TEXT_REQUEST && resultCode == Activity.RESULT_OK ){
+    val reply = data?.getStringExtra(SecondActivitty.EXTRA_REPLY) ?: ""
+    text_header_reply.visibility = View.VISIBLE
+    text_message_reply.text = reply
+    text_message_reply.visibility = View.VISIBLE
+    }
+
+    }
+    e) Run Final App
 -->
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -42,14 +201,57 @@ name: activity_second
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
+    <TextView
+        android:id="@+id/text_header_reply"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:text="@string/text_header_reply"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textStyle="bold"
+        android:visibility="invisible"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/text_message_reply"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:visibility="invisible"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/text_header_reply" />
+
+
+    <EditText
+        android:id="@+id/editText_main"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginStart="16dp"
+        android:hint="@string/editText_main"
+        android:inputType="textPersonName"
+        app:layout_constraintBaseline_toBaselineOf="@+id/button_main"
+        app:layout_constraintEnd_toStartOf="@+id/button_main"
+        app:layout_constraintStart_toStartOf="parent" />
+
     <Button
-        android:id="@+id/button"
+        android:id="@+id/button_main"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
-        android:text="Send"
+        android:text="@string/button_main"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        android:onClick="launchSecondActivity"/>
+
 </android.support.constraint.ConstraintLayout>
